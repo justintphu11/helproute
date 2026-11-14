@@ -1,0 +1,11 @@
+# Datathon data is not committed (5 GB raw file; GitHub limit is 100 MB)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.venv/
+.env

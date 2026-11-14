@@ -1,0 +1,7 @@
+pandas>=3.0
+pyarrow
+matplotlib
+jupyter
+nbformat
+torch
+transformers
