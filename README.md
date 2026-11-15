@@ -4,7 +4,26 @@
 
 **Full plan, labeling guide, models and judging checklist: [CLAUDE.md](CLAUDE.md).** (It's named that so Claude Code picks it up as context automatically; it's a normal Markdown file.)
 
-## Setup
+## Streamlit app
+
+Use Python 3.11 for compatibility with the pinned NumPy and PyArrow versions. From the repository folder:
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
+
+Download the trained model bundle separately and unzip it into `models/`. It must contain `m2_silver_distilroberta/`, `m2_silver_threshold.json`, `types_silver.joblib`, `m1_is_need.joblib`, and `m1_types.joblib`. Models, thresholds, and test data must stay local and must not be committed.
+
+The **Home** page accepts a post and displays matching U.S. resource links and scores for that prompt. Updated text is scanned when the input is committed (click outside the box or press Ctrl/Command+Enter). Housing referrals distinguish legal aid, rent arrears, affordable rentals, and shelter needs; referral rules do not alter the trained classifier or thresholds. Resource directories do not guarantee eligibility, funding, or vacancies.
+
+The **Model performance** page shows published final metrics, a review feed, an issue heatmap, a bubble chart, and a word map. To load the locked test posts, place `test_final.csv` in `labeling/`. If it has no `text` column, also provide `data/processed/reddit_clean.parquet`. The parquet file can supply community groups; `labeling/test_key.csv` is optional. Without local test files, the app clearly labels its synthetic examples. You can also upload a CSV with `text` and optional `is_need` (0/1) and `sub_group` columns.
+
+Prompt scores are not per-prompt accuracy. Accuracy, precision, and recall require ground-truth labels; the app does not retrain or tune thresholds.
+
+## Repository setup
 
 ```bash
 git clone https://github.com/LeonardChiu567/helproute.git
