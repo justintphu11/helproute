@@ -82,8 +82,8 @@ Day 1 noon: guide + overlap labels done (kappa check). Day 1 6pm: B0–M1 workin
 ## STATUS (Nov 14, 2026)
 - Done: full Reddit file profiled and cleaned in `profile_reddit.ipynb`. Results, row counts per cleaning step and open decisions are in README.md.
 - The full file is 230,520 posts (Jan 2025–Nov 2026). Keyword go/no-go: GO. locked_post is true for only 2,180 posts → backup #3 is out.
-- `reddit_clean.parquet` currently = 6 Bay Area subreddits (all posts) + housing/money and work subreddits only when a Bay Area city is mentioned → 11,775 posts, 852 need-keyword hits. That's thin; the proposal is to train on all 15 subreddits and use the city filter only for routing.
+- `reddit_clean.parquet` is the national 15-subreddit training corpus: 51,054 posts and 6,959 need-keyword hits. Bay Area fields are retained only for routing and the Bay Area-vs-national evaluation subgroup.
 - Keyword "needs" are not labels (e.g. PG&E questions match). `src/zeroshot_screen.py` (BART-MNLI, baseline B2) checks real need vs. question/news.
 
 ## NEXT STEP
-Decide the training set (Bay Area-only vs. all 15 subreddits), then draw the ~600-post gold labeling sample (50% keyword hits / 50% random; set the 200 test posts aside first).
+Draw the ~600-post gold labeling sample from all 15 subreddits (50% keyword hits / 50% random; set the 200 test posts aside first), including a Bay Area slice for subgroup evaluation.

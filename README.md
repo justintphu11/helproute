@@ -44,25 +44,23 @@ The profiling and cleaning cells still have their outputs from the last run, so 
 | Drop news, opinion and off-topic subreddits | 64,455 |
 | Drop duplicates (same text, keep earliest) | 61,715 |
 | Drop posts with fewer than 5 words | 61,469 |
-| Keep only the 15 chosen subreddits | 52,087 |
-| Non-Bay subreddits must mention a Bay Area city | **11,775** |
+| Keep only the 15 chosen subreddits | **51,054** |
 
 The cleaning also converts curly quotes to straight ones, decodes HTML entities, replaces links with `[url]` and cuts each post to 400 words. Keyword flags are then recomputed on the clean text.
 
-The 15 subreddits: **Bay Area** bayarea, sanfrancisco, oakland, berkeley, sanjose, eastbay (all posts kept); **housing/money** housing, povertyfinance, personalfinance, frugal, homeless; **work** antiwork, jobs, careerguidance, recruitinghell. For the housing/money and work groups, only posts that mention a Bay Area city are kept.
+The 15 subreddits: **Bay Area** bayarea, sanfrancisco, oakland, berkeley, sanjose, eastbay; **housing/money** housing, povertyfinance, personalfinance, frugal, homeless; **work** antiwork, jobs, careerguidance, recruitinghell. All are retained for national training; Bay Area fields are retained for routing, the demo, and evaluation.
 
 ## Findings so far (Nov 14)
 
 - **Full file:** 230,520 posts from 793 subreddits, January 2025 to November 2026 (most from March to September 2026). `locked_post` is true for only 2,180 posts, so the thread-lock backup idea is out. r/housing has 0 posts.
 - **Need flags are keyword matches, not labels.** They're noisy: "how do I read my PG&E bill" counts as a utilities need, and news posts and home-buying questions also match. Keywords are only used to pick posts to label and as baseline B1.
-- **Clean Bay Area set:** 11,775 posts, of which 852 match a need keyword. By need: homeless 230, utilities 188, housing 155, medical 140, job loss 102, food 47, debt trap 31. Only 47 also contain urgency words.
-- **Tracing a post to a city:** 343 of the 852 name a city in the text and 264 more come from a city subreddit, so 607 (71%) can be traced. 245 (mostly r/bayarea) can't, and the app asks the user for their city. San Francisco, San Jose, Oakland and Berkeley are the only cities with enough posts for per-city numbers.
-- **Housing/money and work groups are tiny once a Bay Area city is required:** only 62 posts, versus about 7,700 need-flagged posts across all 15 subreddits.
+- **National clean set:** 51,054 posts across 15 communities, of which 6,959 match a need keyword. The Bay Area slice contains 11,673 posts and 841 keyword-hit candidates.
+- **Routing remains Bay Area-specific:** city from post text → city subreddit → user prompt → 211/findhelp.org fallback.
 
 ## Open decisions
 
-1. **Training set:** the Bay Area-only set has 852 need-flagged posts, which is thin for silver labels, a 200-post test set and per-subgroup fairness numbers. The proposal is to **train and evaluate on all 15 subreddits with no city requirement**, and use the Bay Area city filter only for routing, the map and the per-city slide numbers.
-2. **Is zero-shot good enough as a screen?** See whether `src/zeroshot_screen.py` separates real needs from questions and news.
+1. **Training set:** train and evaluate on all 15 subreddits with no city requirement. Keep the Bay Area filter only for routing, the map, and per-city reporting.
+2. **Zero-shot baseline:** run it only on validation and test IDs with `--ids`; do not score all 6,959 keyword-hit posts.
 
 ## Next steps
 
