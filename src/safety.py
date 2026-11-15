@@ -3,9 +3,9 @@
 import re
 
 PATTERNS = {
-    "suicide_self_harm": [r"kill myself", r"end it all", r"want to die", r"suicid", r"self[ -]?harm", r"hurt myself"],
-    "abuse_violence": [r"domestic violence", r"elder abuse", r"child abuse", r"\babusive\b", r"\bassault", r"hits me", r"beating me"],
-    "emergency_services": [r"need (the )?police", r"call 911", r"emergency shelter tonight", r"immediate danger", r"unsafe tonight"],
+    "suicide_self_harm": [r"kill myself", r"end it all", r"want to die", r"suicid", r"self[ -]?harm", r"hurt myself", r"can't go on", r"no reason to live"],
+    "abuse_violence": [r"domestic violence", r"elder abuse", r"child abuse", r"\babusive\b", r"\bassault", r"hits me", r"beating me", r"sexual (?:abuse|assault)", r"afraid of (?:him|her|them)"],
+    "emergency_services": [r"need (the )?police", r"call 911", r"emergency shelter tonight", r"immediate danger", r"unsafe tonight", r"nowhere to sleep tonight", r"in danger"],
 }
 
 
