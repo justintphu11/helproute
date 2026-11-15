@@ -86,3 +86,9 @@ The 15 subreddits: **Bay Area** bayarea, sanfrancisco, oakland, berkeley, sanjos
 1. Decide 1 above, then draw the labeling sample: 50% keyword hits + 50% random, about 600 gold posts (300 train / 100 val / 200 test; set the test posts aside first).
 2. Both of us label the same 100 posts → Cohen's kappa.
 3. Silver labels with the Claude API, then baselines B0–B2, M1 TF-IDF + logistic regression, and M2 fine-tuned DistilRoBERTa (see CLAUDE.md).
+
+## Streamlit Community Cloud
+
+Deploy `cloud/app.py` from the `main` branch with **Python 3.11**. Its adjacent `cloud/requirements.txt` installs the inference dependencies and CPU-only PyTorch. The entry point runs the same root `app.py` used locally. On the first prediction, the app downloads the public Drive model bundle, verifies its SHA-256 against the frozen release, and caches the extracted models on the server. No model files or test posts are stored in GitHub.
+
+Cold starts can take longer while the 310 MB bundle downloads. Public hosting processes submitted prompts on the Streamlit server rather than on the visitor’s computer. The app does not write prompts to disk. Without separately provided local test files, the performance page shows the published metrics and clearly labeled synthetic review examples.

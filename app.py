@@ -10,6 +10,7 @@ import streamlit as st
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from src.predict import HelpRoute
+from src.model_download import ensure_models
 from src.resource_routing import housing_sections
 
 ROOT = Path(__file__).resolve().parent
@@ -86,7 +87,9 @@ st.markdown(f'<div class="banner">{LOGO}<div><div class="brand">HelpRoute</div><
 
 @st.cache_resource
 def load_model():
-    return HelpRoute()
+    with st.spinner("Loading the trained model (first launch may take a minute)…"):
+        ensure_models(ROOT / "models")
+        return HelpRoute()
 
 
 def clean_text(value):
@@ -164,7 +167,7 @@ if page == "Home":
     st.markdown('<div class="hero"><h1>A little context. A path to support.</h1><p>Paste a post or describe what’s happening. Find resources that could help, anywhere in the U.S.</p></div>', unsafe_allow_html=True)
     text = st.text_area("Paste your post or describe your situation", height=200, placeholder="For example: I lost my job and need help paying rent and buying food.", max_chars=12000, key="home_prompt")
     submitted = st.button("Find helpful resources →", type="primary")
-    st.caption("Edit or paste a new post, then click outside the box or press Ctrl+Enter (⌘+Enter on Mac) to update results automatically. Please leave out identifying details; entries are processed locally and are not saved to disk.")
+    st.caption("Edit or paste a new post, then click outside the box or press Ctrl+Enter (⌘+Enter on Mac) to update results automatically. Please leave out identifying details; entries are processed by this app and are not saved to disk.")
     safe_text = clean_text(text).strip()
     if not safe_text:
         st.session_state.pop("home_result", None)
