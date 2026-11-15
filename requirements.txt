@@ -1,7 +1,15 @@
 pandas>=3.0
 pyarrow
+openpyxl
+scikit-learn
+joblib
 matplotlib
 jupyter
 nbformat
 torch
 transformers
+datasets
+streamlit
+folium
+streamlit-folium
+praw
