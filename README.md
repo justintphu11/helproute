@@ -17,7 +17,7 @@ streamlit run app.py
 
 Download the trained model bundle separately and unzip it into `models/`. It must contain `m2_silver_distilroberta/`, `m2_silver_threshold.json`, `types_silver.joblib`, `m1_is_need.joblib`, and `m1_types.joblib`. Models, thresholds, and test data must stay local and must not be committed.
 
-The **Home** page accepts a post and displays matching U.S. resource links and scores for that prompt. Updated text is scanned when the input is committed (click outside the box or press Ctrl/Command+Enter). Housing referrals distinguish legal aid, rent arrears, affordable rentals, and shelter needs; referral rules do not alter the trained classifier or thresholds. Resource directories do not guarantee eligibility, funding, or vacancies.
+The **Home** page accepts a post and displays matching U.S. resource links and scores for that prompt. Click Analyze to scan the current text and replace previous results without reloading the page. Housing referrals distinguish legal aid, rent arrears, affordable rentals, and shelter needs; referral rules do not alter the trained classifier or thresholds. Resource directories do not guarantee eligibility, funding, or vacancies.
 
 The **Model performance** page shows published final metrics, a review feed, an issue heatmap, a bubble chart, and a word map. To load the locked test posts, place `test_final.csv` in `labeling/`. If it has no `text` column, also provide `data/processed/reddit_clean.parquet`. The parquet file can supply community groups; `labeling/test_key.csv` is optional. Without local test files, the app clearly labels its synthetic examples. You can also upload a CSV with `text` and optional `is_need` (0/1) and `sub_group` columns.
 

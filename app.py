@@ -164,19 +164,20 @@ with st.sidebar:
     st.markdown("[National resource directory](https://211.org/about-us/your-local-211) · [Health centers](https://findahealthcenter.hrsa.gov/)")
 
 if page == "Home":
-    st.markdown('<div class="hero"><h1>A little context. A path to support.</h1><p>Paste a post or describe what’s happening. Find resources that could help, anywhere in the U.S.</p></div>', unsafe_allow_html=True)
-    text = st.text_area("Paste your post or describe your situation", height=200, placeholder="For example: I lost my job and need help paying rent and buying food.", max_chars=12000, key="home_prompt")
-    submitted = st.button("Find helpful resources →", type="primary")
-    st.caption("Edit or paste a new post, then click outside the box or press Ctrl+Enter (⌘+Enter on Mac) to update results automatically. Please leave out identifying details; entries are processed by this app and are not saved to disk.")
+    st.markdown('<div class="hero"><h1>A little context. A path to support.</h1><p>Paste a post or describe what’s happening.</p></div>', unsafe_allow_html=True)
+    with st.form("analyze_post", clear_on_submit=False):
+        text = st.text_area("Paste your post or describe your situation", height=200, placeholder="For example: I lost my job and need help paying rent and buying food.", max_chars=12000, key="home_prompt")
+        submitted = st.form_submit_button("Analyze", type="primary")
+    st.caption("Paste or edit a post and click Analyze to replace the previous results. No page reload is needed. Please leave out identifying details; entries are processed by this app and are not saved to disk.")
     safe_text = clean_text(text).strip()
     if not safe_text:
         st.session_state.pop("home_result", None)
         st.session_state.pop("home_text", None)
         if submitted:
             st.warning("Paste a post or describe your situation first.")
-    elif submitted or safe_text != st.session_state.get("home_text"):
+    elif submitted:
         st.session_state.pop("home_result", None)
-        with st.spinner("Finding resources for you…"):
+        with st.spinner("Analyzing your post…"):
             new_result = load_model().predict(safe_text)
             st.session_state["home_text"] = safe_text
             st.session_state["home_result"] = new_result
