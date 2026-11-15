@@ -15,3 +15,6 @@ __pycache__/
 *.pyc
 .venv/
 .env
+
+# Per-post predictions (post IDs + labels, incl. test labels) stay local
+reports/*.parquet

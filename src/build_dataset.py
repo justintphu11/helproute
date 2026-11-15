@@ -16,7 +16,7 @@ TYPE_COLUMNS = LABEL_COLUMNS[3:]
 
 
 def default_project_root() -> Path:
-    return Path(__file__).resolve().parents[2]
+    return Path(__file__).resolve().parents[1]
 
 
 def normalize_binary(series: pd.Series) -> pd.Series:
@@ -56,22 +56,39 @@ def main() -> None:
         frames.append(labels)
 
     labels = pd.concat(frames, ignore_index=True)
+    if "labeler" not in labels:
+        labels["labeler"] = labels["_file"]
     duplicate_rows = labels[labels.duplicated("post_id", keep=False)].copy()
-    if not duplicate_rows.empty:
-        for post_id, group in duplicate_rows.groupby("post_id"):
-            if group["labeler"].notna().nunique() >= 2:
-                left, right = group.iloc[0], group.iloc[1]
-                agreement = (group["is_need"] == group["is_need"].iloc[0]).mean()
-                kappa = cohen_kappa_score(group["is_need"], [group["is_need"].iloc[0]] * len(group)) if len(group) > 1 else 1.0
-                print(f"duplicate labelers for {post_id}: agreement={agreement:.3f}, kappa={kappa:.3f}")
-                merged = group.iloc[-1].copy()
-                for col in LABEL_COLUMNS:
-                    merged[col] = int(group[col].max())
-                labels = labels[labels["post_id"] != post_id]
-                labels = pd.concat([labels, pd.DataFrame([merged])], ignore_index=True)
-            else:
-                print(f"warning: duplicate {post_id}; keeping newest label-file row")
-                labels = labels.drop(group.index[:-1])
+
+    # Inter-annotator agreement: one pair (first two distinct labelers) per overlapping post,
+    # Cohen's kappa per label across all such posts. Computed BEFORE merging.
+    pairs = []
+    for post_id, group in duplicate_rows.groupby("post_id"):
+        distinct = group.drop_duplicates("labeler")
+        if len(distinct) >= 2:
+            pairs.append((distinct.iloc[0], distinct.iloc[1]))
+    if pairs:
+        print(f"inter-annotator overlap: {len(pairs)} posts")
+        for col in ["is_need", *TYPE_COLUMNS, "crisis"]:
+            a = [int(p[0][col]) for p in pairs]; b = [int(p[1][col]) for p in pairs]
+            agree = sum(x == y for x, y in zip(a, b)) / len(pairs)
+            kappa = cohen_kappa_score(a, b) if len(set(a) | set(b)) > 1 else float("nan")
+            print(f"  {col:13s} agreement={agree:.3f} kappa={kappa:.3f} (positives: {sum(a)} vs {sum(b)})")
+    else:
+        print("inter-annotator overlap: none found (no post labeled by two different labelers)")
+
+    # Merge duplicates: two labelers -> union (max) of labels; same labeler -> keep newest row.
+    for post_id, group in duplicate_rows.groupby("post_id"):
+        if group["labeler"].nunique() >= 2:
+            merged = group.iloc[-1].copy()
+            for col in LABEL_COLUMNS:
+                merged[col] = int(group[col].max())
+            merged["labeler"] = " + ".join(map(str, group["labeler"].unique())) + " (union)"
+            labels = labels[labels["post_id"] != post_id]
+            labels = pd.concat([labels, pd.DataFrame([merged])], ignore_index=True)
+        else:
+            print(f"warning: duplicate {post_id}; keeping newest label-file row")
+            labels = labels.drop(group.index[:-1])
 
     clean = pd.read_parquet(args.data / "reddit_clean.parquet")
     clean["post_id"] = clean["post_id"].astype(str)

@@ -1,0 +1,8 @@
+silver: 5000 rows, dropped 0 matching test or gold posts
+device=cuda; gold=543; silver=5000; folds=5; epochs=3
+fold=1 val_n=109 val_pr_auc=0.751
+fold=2 val_n=108 val_pr_auc=0.728
+fold=3 val_n=109 val_pr_auc=0.630
+fold=4 val_n=109 val_pr_auc=0.708
+fold=5 val_n=108 val_pr_auc=0.691
+oof (gold) precision=0.497 recall=0.902 f1=0.641 pr_auc=0.696 threshold=0.0369

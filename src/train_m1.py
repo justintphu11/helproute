@@ -17,7 +17,7 @@ TYPE_COLUMNS = ["housing", "homelessness", "food", "medical", "job_income", "bil
 
 
 def root() -> Path:
-    return Path(__file__).resolve().parents[2]
+    return Path(__file__).resolve().parents[1]
 
 
 def metrics(y, p, threshold):
@@ -100,6 +100,7 @@ def main():
     lines += ["", "## Recall by subgroup", ""] + [f"- {k}: {v:.3f}" for k, v in subgroup.items()]
     lines += ["", "## Type models", ""] + [f"- {k}: {v}" for k, v in type_scores.items()]
     args.report.write_text("\n".join(lines) + "\n")
+    pd.DataFrame({"post_id": df["post_id"], "y": y, "prob": m1_prob}).to_parquet(args.report.parent / "m1_oof.parquet", index=False)
     print(json.dumps({"best_C": best_c, "threshold": threshold, "metrics": summary, "recall_by_group": subgroup, "types": type_scores}, indent=2))
 
 
