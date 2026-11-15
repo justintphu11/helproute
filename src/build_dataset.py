@@ -82,6 +82,7 @@ def main() -> None:
     # Access the locked CSV only for identifiers. Test texts/labels remain unread before Phase 8.
     test_ids = set(pd.read_csv(args.test, usecols=["post_id"], dtype={"post_id": str})["post_id"])
     test_keys = set(clean.loc[clean["post_id"].isin(test_ids), "dup_key"])
+    labels = labels.drop(columns=["text"], errors="ignore")
     joined = labels.merge(clean[["post_id", "text", "sub_group", "bay", "n_words", "dup_key", "needs", "any_need"]], on="post_id", how="inner")
     before = len(joined)
     joined = joined[~joined["dup_key"].isin(test_keys)].copy()
