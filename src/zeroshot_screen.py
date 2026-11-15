@@ -6,7 +6,7 @@ Output: data/processed/zeroshot_flagged.parquet  (adds zs_need_score, 0-1)
 
 Usage:  python src/zeroshot_screen.py            # all keyword-flagged posts
         python src/zeroshot_screen.py --limit 200 # quick sample
-CPU is slow (~20-40 min for ~850 posts). On Colab, pick a T4 GPU: ~1-2 min.
+CPU is slow (30+ min for ~850 posts). A GPU (cuda) or Apple Silicon (mps) takes minutes.
 """
 import argparse
 import time
@@ -28,8 +28,8 @@ if args.limit:
     n = n.sample(min(args.limit, len(n)), random_state=0)
 texts = [" ".join(t.split()[:200]) for t in n["text"]]
 
-device = 0 if torch.cuda.is_available() else -1
-print(f"{len(texts)} posts on {'GPU' if device == 0 else 'CPU'}", flush=True)
+device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+print(f"{len(texts)} posts on {device}", flush=True)
 clf = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=device)
 LABELS = ["someone who cannot afford or is losing housing, food, utilities, medical care, or income",
           "a general question, news, opinion, or discussion"]

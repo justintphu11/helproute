@@ -23,10 +23,13 @@ $env:REDDIT_CSV = "C:\path\to\reddit_posts.csv"      # Windows PowerShell
 
 | Step | Command | Time | Output |
 |---|---|---|---|
-| 1. Profile + clean | Open `profile_reddit.ipynb` → Run All (run Jupyter from the repo folder) | ~3 min | `data/processed/reddit_candidates.parquet`, `data/processed/reddit_clean.parquet` |
-| 2. Zero-shot screen | `python src/zeroshot_screen.py` (add `--limit 200` for a quick look) | 20–40 min on CPU, 1–2 min on a Colab T4 GPU | `data/processed/zeroshot_flagged.parquet` |
+| 1. Profile + clean | Open `profile_reddit.ipynb` → run everything above "Zero-shot screen" (run Jupyter from the repo folder) | ~3 min | `data/processed/reddit_candidates.parquet`, `data/processed/reddit_clean.parquet` |
+| 2. Zero-shot screen | Same notebook, "Zero-shot screen" section. Set `LIMIT = 200` for a quick look. First run downloads the model (~1.6 GB). | 30+ min on CPU; minutes on an NVIDIA GPU (cuda) or Apple Silicon (mps), picked automatically | `data/processed/zeroshot_flagged.parquet`, `data/processed/zeroshot_handcheck.csv` |
+| 3. Hand-check | Fill `human_real_need` (1/0) for the 30 posts in `zeroshot_handcheck.csv`, then rerun the last cell | ~15 min | agreement between zero-shot and a human |
 
-The notebook in the repo still has its outputs from the last run, so you can read the results without running it.
+The zero-shot section can also be run as a script: `python src/zeroshot_screen.py [--limit 200]`.
+
+The profiling and cleaning cells still have their outputs from the last run, so you can read those results without running anything.
 
 ## What the notebook does
 
